@@ -43,7 +43,6 @@ import org.yccheok.jstock.analysis.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.yccheok.jstock.engine.ResultType;
 import org.yccheok.jstock.gui.analysis.WizardSelectIndicatorDescriptor;
 import org.yccheok.jstock.gui.analysis.WizardDownloadIndicatorDescriptor;
 import org.yccheok.jstock.gui.analysis.WizardSelectInstallIndicatorMethodDescriptor;
@@ -204,13 +203,12 @@ public class IndicatorPanel extends JPanel {
         jComboBox1.setEditable(true);
         jComboBox1.setPreferredSize(new java.awt.Dimension(150, 24));
         ((AutoCompleteJComboBox)jComboBox1).attachStockInfoObserver(this.getStockInfoObserver());
-        ((AutoCompleteJComboBox)jComboBox1).attachResultObserver(this.getResultObserver());
-        ((AutoCompleteJComboBox)jComboBox1).attachMatchObserver(this.getMatchObserver());
+        ((AutoCompleteJComboBox)jComboBox1).attachDispObserver(this.getDispObserver());
 
         setLayout(new java.awt.BorderLayout());
 
         // Priority give to left component.
-        jSplitPane1.setResizeWeight(1.0);
+        jSplitPane1.setResizeWeight(0.9);
 
         java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("org/yccheok/jstock/data/gui"); // NOI18N
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("IndicatorPanel_StockIndicator"))); // NOI18N
@@ -608,6 +606,8 @@ public class IndicatorPanel extends JPanel {
                 return;
             }
 
+            projectName = projectName.trim();
+            
             if (projectName.length() == 0) {
                 JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_alert_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_alert_indicator_name"), JOptionPane.WARNING_MESSAGE);
                 continue;
@@ -644,6 +644,8 @@ public class IndicatorPanel extends JPanel {
                 return;
             }
 
+            projectName = projectName.trim();
+            
             if (projectName.length() == 0) {
                 JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_module_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_module_indicator_name"), JOptionPane.WARNING_MESSAGE);
                 continue;
@@ -694,6 +696,8 @@ public class IndicatorPanel extends JPanel {
                     return;
                 }
 
+                projectName = projectName.trim();
+                
                 if (projectName.length() == 0) {
                     JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_alert_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_alert_indicator_name"), JOptionPane.WARNING_MESSAGE);
                     continue;
@@ -751,6 +755,8 @@ public class IndicatorPanel extends JPanel {
                     return;
                 }
 
+                projectName = projectName.trim();
+                
                 if (projectName.length() == 0) {
                     JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_module_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_module_indicator_name"), JOptionPane.WARNING_MESSAGE);
                     continue;
@@ -929,6 +935,8 @@ public class IndicatorPanel extends JPanel {
                 return;
             }
 
+            newProjectName = newProjectName.trim();
+            
             if (newProjectName.length() == 0) {
                 JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_alert_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_alert_indicator_name"), JOptionPane.WARNING_MESSAGE);
                 continue;
@@ -983,6 +991,8 @@ public class IndicatorPanel extends JPanel {
                 return;
             }
 
+            newProjectName = newProjectName.trim();
+            
             if (newProjectName.length() == 0) {
                 JOptionPane.showMessageDialog(this, MessagesBundle.getString("warning_message_you_need_to_specific_module_indicator_name"), MessagesBundle.getString("warning_title_you_need_to_specific_module_indicator_name"), JOptionPane.WARNING_MESSAGE);
                 continue;
@@ -1321,13 +1331,10 @@ public class IndicatorPanel extends JPanel {
         final AutoCompleteJComboBox autoCompleteJComboBox = ((AutoCompleteJComboBox)this.jComboBox1);
 
         if (country == Country.India) {
-            autoCompleteJComboBox.setAjaxProvider(AjaxServiceProvider.Google, Arrays.asList("NSE", "BOM"));
             autoCompleteJComboBox.setGreedyEnabled(true, Arrays.asList("N", "B"));
         } else if (country == Country.Japan) {
-            autoCompleteJComboBox.setAjaxProvider(AjaxServiceProvider.Google, Arrays.asList("TYO"));
             autoCompleteJComboBox.setGreedyEnabled(false, java.util.Collections.<String>emptyList());
         } else {
-            autoCompleteJComboBox.setAjaxProvider(AjaxServiceProvider.Yahoo, java.util.Collections.<String>emptyList());
             autoCompleteJComboBox.setGreedyEnabled(false, java.util.Collections.<String>emptyList());
         }
     }
@@ -1347,31 +1354,14 @@ public class IndicatorPanel extends JPanel {
         stockTask.execute();
     }
 
-    private org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, MatchType> getMatchObserver() {
-        return new org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, MatchType>() {
+    private org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, DispType> getDispObserver() {
+        return new org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, DispType>() {
 
             @Override
-            public void update(AutoCompleteJComboBox subject, MatchType matchType) {
-                assert(matchType != null);
-                Code code = matchType.getCode();
-                final Symbol symbol = Symbol.newInstance(matchType.n);
-                final StockInfo stockInfo = StockInfo.newInstance(code, symbol);
-                
-                addStockInfoFromAutoCompleteJComboBox(stockInfo);              
-            }                
-        };
-    }
-    
-    private org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, ResultType> getResultObserver() {
-        return new org.yccheok.jstock.engine.Observer<AutoCompleteJComboBox, ResultType>() {
-
-            @Override
-            public void update(AutoCompleteJComboBox subject, ResultType resultType) {
-                assert(resultType != null);
-                // Symbol from Yahoo means Code in JStock.
-                final Code code = Code.newInstance(resultType.symbol);
-                // Name from Yahoo means Symbol in JStock.
-                final Symbol symbol = Symbol.newInstance(resultType.name);
+            public void update(AutoCompleteJComboBox subject, DispType dispType) {
+                assert(dispType != null);
+                final Code code = Code.newInstance(dispType.getDispCode());
+                final Symbol symbol = Symbol.newInstance(dispType.getDispName());
                 final StockInfo stockInfo = StockInfo.newInstance(code, symbol);
 
                 addStockInfoFromAutoCompleteJComboBox(stockInfo);

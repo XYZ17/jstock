@@ -1797,8 +1797,9 @@ public class Utils {
         }
         catch (Exception exp) {
             log.error(null, exp);
-        }
-        finally {
+        } catch (java.lang.Error err) {
+            log.error(null, err);
+        } finally {
             org.yccheok.jstock.file.Utils.close(reader);
             org.yccheok.jstock.file.Utils.close(inputStream);
         }
@@ -2458,6 +2459,16 @@ public class Utils {
         return gson;
     }
     
+    public static List<Country> getSupportedStockMarketCountries() {
+        java.util.List<Country> countries = new ArrayList<>(Arrays.asList(Country.values()));
+        // Czech and Hungary are only for currency exchange purpose.
+        countries.remove(Country.Czech);
+        countries.remove(Country.Hungary);
+        // Spain are no longer supported.
+        countries.remove(Country.Spain);
+        return countries;
+    }
+    
     public static Map<Country, Long> loadStockInfoDatabaseMeta(String json) {
         final Gson gson = getGsonForStockInfoDatabaseMeta();
         
@@ -2677,11 +2688,11 @@ public class Utils {
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    private static final String ABOUT_BOX_VERSION_STRING = "1.0.7.15";
+    private static final String ABOUT_BOX_VERSION_STRING = "1.0.7.17";
 
-    // 1.0.7.15
+    // 1.0.7.17
     // For About box comparision on latest version purpose.
-    private static final int APPLICATION_VERSION_ID = 1144;
+    private static final int APPLICATION_VERSION_ID = 1146;
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     

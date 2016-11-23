@@ -50,7 +50,7 @@
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new AutoCompleteJComboBox();"/>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoCompleteJComboBox)jComboBox1).attachStockInfoObserver(this.getStockInfoObserver());&#xd;&#xa;((AutoCompleteJComboBox)jComboBox1).attachResultObserver(this.getResultObserver());&#xd;&#xa;((AutoCompleteJComboBox)jComboBox1).attachMatchObserver(this.getMatchObserver());"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="((AutoCompleteJComboBox)jComboBox1).attachStockInfoObserver(this.getStockInfoObserver());&#xd;&#xa;((AutoCompleteJComboBox)jComboBox1).attachDispObserver(this.getDispObserver());"/>
       </AuxValues>
     </Component>
   </NonVisualComponents>
@@ -71,7 +71,7 @@
   <SubComponents>
     <Container class="javax.swing.JSplitPane" name="jSplitPane1">
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="// Priority give to left component.&#xa;jSplitPane1.setResizeWeight(1.0);"/>
+        <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="// Priority give to left component.&#xa;jSplitPane1.setResizeWeight(0.9);"/>
       </AuxValues>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
